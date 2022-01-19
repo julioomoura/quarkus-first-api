@@ -1,4 +1,4 @@
-package br.com.juliomoura;
+package br.com.juliomoura.api;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

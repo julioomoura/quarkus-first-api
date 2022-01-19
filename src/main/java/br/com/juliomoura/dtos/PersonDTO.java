@@ -1,5 +1,7 @@
 package br.com.juliomoura.dtos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class PersonDTO {
     private String name;
     private String lastName;
@@ -10,6 +12,7 @@ public class PersonDTO {
         this.lastName = lastName;
     }
 
+    @JsonIgnore
     public String getFullName() {
         return name + " " + lastName;
     }
@@ -37,5 +40,9 @@ public class PersonDTO {
     }
 
 
+    @Override
+    public String toString() {
+        return getFullName();
+    }
 
 }
