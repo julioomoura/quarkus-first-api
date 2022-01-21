@@ -3,6 +3,10 @@ package br.com.juliomoura.api;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
@@ -17,15 +21,15 @@ import javax.ws.rs.core.UriInfo;
 import org.jboss.logging.Logger;
 
 import br.com.juliomoura.dtos.PersonDTO;
+import br.com.juliomoura.services.person.PersonService;
 
 @Path("/v1/people")
 public class PersonController {
 
     private static final Logger LOG = Logger.getLogger(PersonController.class);
 
-    private static PersonDTO personOne = new PersonDTO("Júlio", "Moura");
-    private static PersonDTO personTwo = new PersonDTO("Gaby", "Cardoso");
-    private static List<PersonDTO> people = Arrays.asList(personOne, personTwo);
+    @Inject
+    PersonService service;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -33,9 +37,12 @@ public class PersonController {
 
         LOG.info("Creating person: " + personDTO);
 
+        PersonDTO created = service.create(personDTO);
+
         URI location = uriInfo.getAbsolutePathBuilder()
                 .path(PersonController.class, "listPerson")
-                .build(personDTO);
+                .build(created);
+
         return Response.created(location).build();
     }
 
@@ -43,17 +50,16 @@ public class PersonController {
     public Response listPeople() {
         LOG.info("Listing all people");
 
-        return Response.ok(people).build();
+        return Response.ok(service.listAll()).build();
     }
 
     @GET
     @Path("/{id}")
-    public Response listPerson(@PathParam(value = "id") Integer id) {
-        try {
-            PersonDTO personDTO = people.get(id);
-            return Response.ok(personDTO).build();
-        } catch (ArrayIndexOutOfBoundsException exception) {
-            throw new NotFoundException();
-        }
+    public Response listPerson(@PathParam(value = "id") UUID uuid) {
+        Optional<PersonDTO> personFound = service.findById(uuid);
+        if(personFound.isPresent()) {
+            return Response.ok(personFound.get()).build();
+        };
+        throw new NotFoundException();
     }
 }
