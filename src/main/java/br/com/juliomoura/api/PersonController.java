@@ -1,8 +1,6 @@
 package br.com.juliomoura.api;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
