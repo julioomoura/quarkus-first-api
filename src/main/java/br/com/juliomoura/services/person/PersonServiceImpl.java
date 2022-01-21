@@ -10,7 +10,7 @@ import javax.inject.Singleton;
 import br.com.juliomoura.dtos.PersonDTO;
 
 @Singleton
-public class PersonServiceImpl implements PersonService {
+public class PersonServiceImpl implements IPersonService {
 
     @Override
     public List<PersonDTO> listAll() {
