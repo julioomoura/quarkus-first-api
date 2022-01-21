@@ -1,7 +1,6 @@
 package br.com.juliomoura.api;
 
 import java.net.URI;
-import java.util.Optional;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -50,13 +49,11 @@ public class PersonController {
 
     @GET
     @Path("/{id}")
-    public Response listPerson(@PathParam(value = "id") UUID uuid) {
+    public PersonDTO listPerson(@PathParam(value = "id") UUID uuid) {
         Log.info("PersonController.listPerson - Input: " + uuid);
-        Optional<PersonDTO> personFound = service.findById(uuid);
-        if(personFound.isPresent()) {
-            return Response.ok(personFound.get()).build();
-        };
-        Log.info("PersonController.listPerson - Not Found for UUID: " + uuid);
-        throw new NotFoundException();
+        return service.findById(uuid).orElseThrow(() -> {
+            Log.info("PersonController.listPerson - Not Found for UUID: " + uuid);
+            throw new NotFoundException();
+        });
     }
 }
