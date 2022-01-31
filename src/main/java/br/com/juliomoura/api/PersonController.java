@@ -15,11 +15,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+
 import br.com.juliomoura.dtos.PersonDTO;
 import br.com.juliomoura.services.person.IPersonService;
 import io.quarkus.logging.Log;
 
 @Path("/v1/people")
+@Tag(name = "/v1/people", description = "People API")
 public class PersonController {
 
     @Inject
@@ -27,6 +32,10 @@ public class PersonController {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    @APIResponses(
+        value = {@APIResponse(description = "Returns created when creates a person", responseCode = "201")
+        }
+    )
     public Response create(final PersonDTO personDTO, @Context UriInfo uriInfo) {
 
         Log.info("PersonController.create - Input: " + personDTO);
@@ -49,6 +58,11 @@ public class PersonController {
 
     @GET
     @Path("/{id}")
+    @APIResponses(
+        value = {@APIResponse(description = "Returns OK when finds a person", responseCode = "200"),
+                @APIResponse(description = "Returns Not found when doesn't find a person", responseCode = "404")
+        }
+    )
     public PersonDTO listPerson(@PathParam(value = "id") UUID uuid) {
         Log.info("PersonController.listPerson - Input: " + uuid);
         return service.findById(uuid).orElseThrow(() -> {
